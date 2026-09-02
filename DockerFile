@@ -2,4 +2,3 @@ FROM python:3.12-alpine
 WORKDIR/app
 COPY..
 CMD["python","menu.py"]
-ngrok http 80 --url https://dragster-scribing-other.ngrok-free.dev
