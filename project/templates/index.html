@@ -1,0 +1,862 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Medical Management System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        .container {
+            width: 600px;
+            max-width: 90%;
+            margin: 60px auto;
+            text-align: center;
+            background-color: #1e293b;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            padding: 18px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #3b82f6;
+            transform: scale(1.02);
+        }
+
+        .exit {
+            background-color: #dc2626;
+        }
+
+        .exit:hover {
+            background-color: #ef4444;
+        }
+
+        #content {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .form-box {
+            background-color: #334155;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .form-box h2 {
+            text-align: center;
+            color: #60a5fa;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #f8fafc;
+            color: #111827;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 3px solid #60a5fa;
+        }
+
+        .submit-button {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .back-button {
+            margin-top: 10px;
+            width: 100%;
+            background-color: #64748b;
+        }
+
+        .back-button:hover {
+            background-color: #94a3b8;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #475569;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .result h3 {
+            margin-top: 0;
+        }
+
+        .success {
+            border-left: 5px solid #22c55e;
+        }
+
+        .error {
+            border-left: 5px solid #ef4444;
+        }
+
+        .exit-message {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .exit-message h2 {
+            color: #60a5fa;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>Medical Management System</h1>
+
+    <p class="subtitle">
+        Please select an option
+    </p>
+
+
+    <!-- MAIN MENU -->
+
+    <div id="menu" class="menu">
+
+        <button onclick="showRegister()">
+            Register Patient
+        </button>
+
+        <button onclick="showAppointment()">
+            Book Appointment
+        </button>
+
+        <button onclick="showBill()">
+            Calculate Bill
+        </button>
+
+        <button onclick="showTriage()">
+            Assign Triage Room
+        </button>
+
+        <button class="exit" onclick="exitSystem()">
+            Exit
+        </button>
+
+    </div>
+
+
+    <!-- CONTENT AREA -->
+
+    <div id="content"></div>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       MENU FUNCTIONS
+       ========================= */
+
+    function hideMenu() {
+        document.getElementById("menu").style.display = "none";
+    }
+
+
+    function showMenu() {
+        document.getElementById("menu").style.display = "flex";
+        document.getElementById("content").innerHTML = "";
+    }
+
+
+
+    /* =========================
+       REGISTER PATIENT
+       ========================= */
+
+    function showRegister() {
+
+        hideMenu();
+
+        document.getElementById("content").innerHTML = `
+
+            <div class="form-box">
+
+                <h2>Register Patient</h2>
+
+                <label>Patient Name</label>
+
+                <input
+                    type="text"
+                    id="patientName"
+                    placeholder="Enter patient name"
+                >
+
+
+                <label>Patient Age</label>
+
+                <input
+                    type="number"
+                    id="patientAge"
+                    min="1"
+                    placeholder="Enter patient age"
+                >
+
+
+                <label>Patient ID</label>
+
+                <input
+                    type="number"
+                    id="patientID"
+                    min="0"
+                    placeholder="Enter patient ID"
+                >
+
+
+                <button
+                    class="submit-button"
+                    onclick="registerPatient()"
+                >
+                    Register Patient
+                </button>
+
+
+                <button
+                    class="back-button"
+                    onclick="showMenu()"
+                >
+                    Back to Menu
+                </button>
+
+
+                <div id="result"></div>
+
+            </div>
+
+        `;
+    }
+
+
+    async function registerPatient() {
+
+        const name =
+            document.getElementById("patientName").value;
+
+        const age =
+            Number(document.getElementById("patientAge").value);
+
+        const id =
+            Number(document.getElementById("patientID").value);
+
+
+        try {
+
+            const response = await fetch("/register", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    name: name,
+                    age: age,
+                    id: id
+                })
+
+            });
+
+
+            const result = await response.json();
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            if (result.success) {
+
+                resultBox.innerHTML = `
+
+                    <div class="result success">
+
+                        <h3>
+                            Patient Registered Successfully!
+                        </h3>
+
+                        <p>
+                            <strong>Name:</strong>
+                            ${result.patient.name}
+                        </p>
+
+                        <p>
+                            <strong>Age:</strong>
+                            ${result.patient.age}
+                        </p>
+
+                        <p>
+                            <strong>Patient ID:</strong>
+                            ${result.patient.id}
+                        </p>
+
+                    </div>
+
+                `;
+
+            } else {
+
+                displayError(result.message);
+
+            }
+
+        } catch (error) {
+
+            displayError(
+                "Unable to connect to the server."
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================
+       BOOK APPOINTMENT
+       ========================= */
+
+    function showAppointment() {
+
+        hideMenu();
+
+        document.getElementById("content").innerHTML = `
+
+            <div class="form-box">
+
+                <h2>Book Appointment</h2>
+
+
+                <label>Department</label>
+
+                <select id="department">
+
+                    <option value="gp">
+                        GP
+                    </option>
+
+                    <option value="specialist">
+                        Specialist
+                    </option>
+
+                </select>
+
+
+                <label>Appointment Date</label>
+
+                <input
+                    type="text"
+                    id="appointmentDate"
+                    placeholder="DD/MM/YYYY"
+                >
+
+
+                <label>Confirm Booking</label>
+
+                <select id="confirmation">
+
+                    <option value="Y">
+                        Yes
+                    </option>
+
+                    <option value="N">
+                        No
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="submit-button"
+                    onclick="bookAppointment()"
+                >
+                    Book Appointment
+                </button>
+
+
+                <button
+                    class="back-button"
+                    onclick="showMenu()"
+                >
+                    Back to Menu
+                </button>
+
+
+                <div id="result"></div>
+
+            </div>
+
+        `;
+    }
+
+
+    async function bookAppointment() {
+
+        const department =
+            document.getElementById("department").value;
+
+        const appointmentDate =
+            document.getElementById("appointmentDate").value;
+
+        const confirmation =
+            document.getElementById("confirmation").value;
+
+
+        try {
+
+            const response = await fetch("/appointment", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    department: department,
+                    appointment_date: appointmentDate,
+                    confirmation: confirmation
+                })
+
+            });
+
+
+            const result = await response.json();
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            if (result.success) {
+
+                resultBox.innerHTML = `
+
+                    <div class="result success">
+
+                        <h3>Appointment Confirmed!</h3>
+
+                        <p>${result.message}</p>
+
+                        <p>
+                            <strong>Department:</strong>
+                            ${result.department}
+                        </p>
+
+                        <p>
+                            <strong>Appointment Date:</strong>
+                            ${result.appointment_date}
+                        </p>
+
+                    </div>
+
+                `;
+
+            } else {
+
+                displayError(result.message);
+
+            }
+
+        } catch (error) {
+
+            displayError(
+                "Unable to connect to the server."
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================
+       CALCULATE BILL
+       ========================= */
+
+    function showBill() {
+
+        hideMenu();
+
+        document.getElementById("content").innerHTML = `
+
+            <div class="form-box">
+
+                <h2>Calculate Bill</h2>
+
+
+                <label>Patient Type</label>
+
+                <select id="patientType">
+
+                    <option value="subsidised">
+                        Subsidised
+                    </option>
+
+                    <option value="private">
+                        Private
+                    </option>
+
+                </select>
+
+
+                <label>Number of Lab Tests</label>
+
+                <input
+                    type="number"
+                    id="numberOfTests"
+                    min="0"
+                    placeholder="Enter number of tests"
+                >
+
+
+                <button
+                    class="submit-button"
+                    onclick="calculateBill()"
+                >
+                    Calculate Bill
+                </button>
+
+
+                <button
+                    class="back-button"
+                    onclick="showMenu()"
+                >
+                    Back to Menu
+                </button>
+
+
+                <div id="result"></div>
+
+            </div>
+
+        `;
+    }
+
+
+    async function calculateBill() {
+
+        const patientType =
+            document.getElementById("patientType").value;
+
+        const numberOfTests =
+            Number(
+                document.getElementById("numberOfTests").value
+            );
+
+
+        try {
+
+            const response = await fetch("/bill", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    patient_type: patientType,
+                    number_of_tests: numberOfTests
+                })
+
+            });
+
+
+            const result = await response.json();
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            if (result.success) {
+
+                resultBox.innerHTML = `
+
+                    <div class="result success">
+
+                        <h3>Bill Calculated Successfully!</h3>
+
+                        <p>
+                            <strong>Patient Type:</strong>
+                            ${result.patient_type}
+                        </p>
+
+                        <p>
+                            <strong>Number of Lab Tests:</strong>
+                            ${result.number_of_tests}
+                        </p>
+
+                        <p>
+                            <strong>Subtotal:</strong>
+                            $${Number(result.subtotal).toFixed(2)}
+                        </p>
+
+                        <p>
+                            <strong>Total:</strong>
+                            $${Number(result.total).toFixed(2)}
+                        </p>
+
+                    </div>
+
+                `;
+
+            } else {
+
+                displayError(result.message);
+
+            }
+
+        } catch (error) {
+
+            displayError(
+                "Unable to connect to the server."
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================
+       TRIAGE ROOM
+       ========================= */
+
+    function showTriage() {
+
+        hideMenu();
+
+        document.getElementById("content").innerHTML = `
+
+            <div class="form-box">
+
+                <h2>Assign Triage Room</h2>
+
+
+                <label>
+                    Severity of Condition (1-10)
+                </label>
+
+                <input
+                    type="number"
+                    id="severity"
+                    min="1"
+                    max="10"
+                    placeholder="Enter severity from 1 to 10"
+                >
+
+
+                <button
+                    class="submit-button"
+                    onclick="assignTriage()"
+                >
+                    Assign Room
+                </button>
+
+
+                <button
+                    class="back-button"
+                    onclick="showMenu()"
+                >
+                    Back to Menu
+                </button>
+
+
+                <div id="result"></div>
+
+            </div>
+
+        `;
+    }
+
+
+    async function assignTriage() {
+
+        const severity =
+            Number(
+                document.getElementById("severity").value
+            );
+
+
+        try {
+
+            const response = await fetch("/triage", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    severity: severity
+                })
+
+            });
+
+
+            const result = await response.json();
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            if (result.success) {
+
+                resultBox.innerHTML = `
+
+                    <div class="result success">
+
+                        <h3>Triage Room Assigned!</h3>
+
+                        <p>
+                            <strong>Severity:</strong>
+                            ${result.severity}
+                        </p>
+
+                        <p>
+                            <strong>Assigned Room:</strong>
+                            ${result.assigned_room}
+                        </p>
+
+                    </div>
+
+                `;
+
+            } else {
+
+                displayError(result.message);
+
+            }
+
+        } catch (error) {
+
+            displayError(
+                "Unable to connect to the server."
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================
+       ERROR MESSAGE
+       ========================= */
+
+    function displayError(message) {
+
+        const resultBox =
+            document.getElementById("result");
+
+        resultBox.innerHTML = `
+
+            <div class="result error">
+
+                <h3>Error</h3>
+
+                <p>${message}</p>
+
+            </div>
+
+        `;
+
+    }
+
+
+
+    /* =========================
+       EXIT
+       ========================= */
+
+    function exitSystem() {
+
+        document.getElementById("menu").innerHTML = `
+
+            <div class="exit-message">
+
+                <h2>
+                    Thank you for using the system.
+                </h2>
+
+                <p>
+                    You may close this page.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+</script>
+
+</body>
+</html>
+```
